@@ -19,7 +19,6 @@ class Home extends BaseController
 
           $model = new DeckModel();
           $data['data'] = $model->where('deck_id', $id)->first();
-          // echo $data;
           return view('edit_deck', $data);
      }
 }

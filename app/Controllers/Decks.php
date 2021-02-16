@@ -22,28 +22,38 @@ class Decks extends ResourceController
      // create
      public function create()
      {
-          $rules = [];
+          $empty = empty($_FILES['cover']['name']);
+          $rules = null;
           $rules = [
                'name' => 'required|is_unique[decks.name]',
                'num_of_cards' => 'required',
-               'type' => 'required'
+               'type' => 'required',
           ];
-
-
-
-
+          if ($empty) {
+          } else {
+               $rules = [
+                    'name' => 'required|is_unique[decks.name]',
+                    'num_of_cards' => 'required',
+                    'type' => 'required',
+                    'cover' => 'is_image[cover]|max_size[cover,4096]'
+               ];
+          }
           if ($this->validate($rules)) {
                $file = $this->request->getFile('cover');
                $foldername = null;
-               if ($file->isValid()) {
-                    $foldername = strtolower($this->request->getVar('name'));
-                    $foldername = str_replace(' ', '_', $foldername);
-                    $file->move('./assets/upload/cards/' . $foldername, "cover." . $file->getExtension());
-               } else {
+               if ($empty) {
                     $foldername = null;
+               } else {
+                    if ($file->isValid()) {
+                         $foldername = strtolower($this->request->getVar('name'));
+                         $foldername = str_replace(' ', '_', $foldername);
+                         $ext = $file->getExtension();
+                         $time = time();
+                         $file->move('./assets/upload/cards/' . $foldername, "cover_" . $time . "." . $ext);
+                         $foldername = $foldername . "/cover_" . $time . "." . $ext;
+                    }
                }
                $model = new DeckModel();
-
                $data = [
                     'name' => $this->request->getVar('name'),
                     'number_of_cards'  => $this->request->getVar('num_of_cards'),
