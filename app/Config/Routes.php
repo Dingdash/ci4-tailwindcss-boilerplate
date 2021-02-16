@@ -33,6 +33,7 @@ $routes->resource('decks');
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 $routes->get('/newdeck', 'Home::newdeck');
+$routes->get('/editdeck/(:num)', 'Home::editdeck/$1');
 $routes->get('/cards', 'CardController::index');
 $routes->get('/cards/(:num)', 'CardController::showbycard/$1');
 $routes->get('/cards/attribute/(:num)', 'CardController::getAttribute/$1');

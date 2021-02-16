@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="<?= base_url('assets/styles/tailwind.css'); ?>">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Home</title>
     <style>
     #dropdown-content {
@@ -187,8 +188,9 @@ axios.get("<?php echo base_url(); ?>/decks").then(function(response) {
         string += data[i].created_at;
         string += '</td>';
         string += '<td class="p-4">';
-        string += ` <button class = "bg-red-600 p-2 rounded-md" > Delete </button> 
-            <button class = "bg-orange-900 p-2 rounded-md" > Edit </button> `;
+        string += ` <button class = "bg-red-600 p-2 rounded-md" data-id=` + data[i].deck_id + ` onclick="deletebutton(this)" > Delete </button> 
+            <button class = "bg-orange-900 p-2 rounded-md" data-id=` + data[i].deck_id +
+            ` onclick="edit(this)"> Edit </button> `;
         string += "</tr>";
 
 
@@ -199,6 +201,17 @@ axios.get("<?php echo base_url(); ?>/decks").then(function(response) {
     document.getElementById("datatable").innerHTML = string;
 
 });
+
+function edit(item) {
+    var id = $(item).data('id');
+    var url = "<?php echo base_url(); ?>";
+    window.location.href = url + '/editdeck/' + id;
+}
+
+function deletebutton(item) {
+    var id = $(item).data('id');
+    $(item).parentsUntil("tr").parent().remove();
+}
 
 function navclick() {
     var width = document.getElementById("aside").offsetWidth;

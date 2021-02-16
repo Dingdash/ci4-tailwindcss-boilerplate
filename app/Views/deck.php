@@ -102,7 +102,7 @@
                 </label>
                 <div class="h-4">
                 </div>
-                <input type='file' onchange="readURL(this);" accept="image/*" />
+                <input id="file" type='file' onchange="readURL(this);" accept="image/*" />
                 <div class="h-4">
                 </div>
                 <img id="blah" src="http://placehold.it/180" alt="your image" />
@@ -117,12 +117,18 @@
 </body>
 <script>
 function submitdata() {
-    axios.post("<?php echo base_url('decks'); ?>", {
-        name: document.querySelector('[name="name"]').value,
-        num_of_cards: document.querySelector('[name="number"]').value,
-        type: document.querySelector('[name="type"]').value
+    var imageFile = document.querySelector("#file");
+    const formData = new FormData();
+    formData.append('name', document.querySelector('[name="name"]').value);
+    formData.append('num_of_cards', document.querySelector('[name="number"]').value);
+    formData.append('type', document.querySelector('[name="type"]').value);
+    formData.append('cover', imageFile.files[0]);
+    axios.post("<?php echo base_url('decks'); ?>", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     }).then(function(response) {
-        alert(response);
+        console.log(response.data);
     });
 }
 

@@ -22,30 +22,49 @@ class Decks extends ResourceController
     // create
     public function create()
     {
-
-        // echo $isvalid;
-        // if ($isvalid) {
-        $model = new DeckModel();
-        $data = [
-            'name' => $this->request->getVar('name'),
-            'number_of_cards'  => $this->request->getVar('num_of_cards'),
-            'type' => $this->request->getVar('type')
+        $rules = [];
+        $rules = [
+            'name' => 'required|is_unique[decks.name]',
+            'num_of_cards' => 'required',
+            'type' => 'required'
         ];
-        $id = $model->save($data);
-        if (!$id) {
-            return $this->fail($model->errors());
+
+
+
+
+        if ($this->validate($rules)) {
+            $file = $this->request->getFile('cover');
+            $foldername = null;
+            if ($file->isValid()) {
+                $foldername = strtolower($this->request->getVar('name'));
+                $foldername = str_replace(' ', '_', $foldername);
+                $file->move('./assets/upload/cards/' . $foldername, "cover." . $file->getExtension());
+            } else {
+                $foldername = null;
+            }
+            $model = new DeckModel();
+
+            $data = [
+                'name' => $this->request->getVar('name'),
+                'number_of_cards'  => $this->request->getVar('num_of_cards'),
+                'type' => $this->request->getVar('type'),
+                'cover' => $foldername
+            ];
+            $id = $model->save($data);
+            if (!$id) {
+                return $this->fail($model->errors());
+            }
+            $response = [
+                'status'   => 201,
+                'error'    => null,
+                'messages' => [
+                    'success' => 'Deck created successfully',
+                    'id' => $id
+                ]
+            ];
+        } else {
+            return  json_encode($this->validator->getErrors());
         }
-        $response = [
-            'status'   => 201,
-            'error'    => null,
-            'messages' => [
-                'success' => 'Deck created successfully',
-                'id' => $id
-            ]
-        ];
-        // } else {
-        // }
-
         return $this->respondCreated($response);
     }
 
