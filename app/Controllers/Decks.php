@@ -8,116 +8,116 @@ use App\Models\DeckModel;
 
 class Decks extends ResourceController
 {
-    use ResponseTrait;
+     use ResponseTrait;
 
-    // all users
-    public function index()
-    {
-        helper(['form', 'url']);
-        $model = new DeckModel();
-        $data['deck'] = $model->orderBy('deck_id', 'DESC')->findAll();
-        return $this->respond($data);
-    }
+     // all users
+     public function index()
+     {
+          helper(['form', 'url']);
+          $model = new DeckModel();
+          $data['deck'] = $model->orderBy('deck_id', 'DESC')->findAll();
+          return $this->respond($data);
+     }
 
-    // create
-    public function create()
-    {
-        $rules = [];
-        $rules = [
-            'name' => 'required|is_unique[decks.name]',
-            'num_of_cards' => 'required',
-            'type' => 'required'
-        ];
-
-
+     // create
+     public function create()
+     {
+          $rules = [];
+          $rules = [
+               'name' => 'required|is_unique[decks.name]',
+               'num_of_cards' => 'required',
+               'type' => 'required'
+          ];
 
 
-        if ($this->validate($rules)) {
-            $file = $this->request->getFile('cover');
-            $foldername = null;
-            if ($file->isValid()) {
-                $foldername = strtolower($this->request->getVar('name'));
-                $foldername = str_replace(' ', '_', $foldername);
-                $file->move('./assets/upload/cards/' . $foldername, "cover." . $file->getExtension());
-            } else {
-                $foldername = null;
-            }
-            $model = new DeckModel();
 
-            $data = [
-                'name' => $this->request->getVar('name'),
-                'number_of_cards'  => $this->request->getVar('num_of_cards'),
-                'type' => $this->request->getVar('type'),
-                'cover' => $foldername
-            ];
-            $id = $model->save($data);
-            if (!$id) {
-                return $this->fail($model->errors());
-            }
-            $response = [
-                'status'   => 201,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Deck created successfully',
-                    'id' => $id
-                ]
-            ];
-        } else {
-            return  json_encode($this->validator->getErrors());
-        }
-        return $this->respondCreated($response);
-    }
 
-    // single user
-    public function show($id = null)
-    {
-        $model = new DeckModel();
-        $data = $model->where('deck_id', $id)->first();
-        if ($data) {
-            return $this->respond($data);
-        } else {
-            return $this->failNotFound('No Deck found');
-        }
-    }
+          if ($this->validate($rules)) {
+               $file = $this->request->getFile('cover');
+               $foldername = null;
+               if ($file->isValid()) {
+                    $foldername = strtolower($this->request->getVar('name'));
+                    $foldername = str_replace(' ', '_', $foldername);
+                    $file->move('./assets/upload/cards/' . $foldername, "cover." . $file->getExtension());
+               } else {
+                    $foldername = null;
+               }
+               $model = new DeckModel();
 
-    // update
-    public function update($id = null)
-    {
-        $model = new DeckModel();
-        $id = $this->request->getVar('id');
-        $data = [
-            'name' => $this->request->getVar('name'),
-            'number_of_cards'  => $this->request->getVar('num_of_cards'),
-            'type'  => $this->request->getVar('type'),
-        ];
-        $model->update($id, $data);
-        $response = [
-            'status'   => 200,
-            'error'    => null,
-            'messages' => [
-                'success' => 'Deck updated successfully'
-            ]
-        ];
-        return $this->respond($response);
-    }
+               $data = [
+                    'name' => $this->request->getVar('name'),
+                    'number_of_cards'  => $this->request->getVar('num_of_cards'),
+                    'type' => $this->request->getVar('type'),
+                    'cover' => $foldername
+               ];
+               $id = $model->save($data);
+               if (!$id) {
+                    return $this->fail($model->errors());
+               }
+               $response = [
+                    'status'   => 201,
+                    'error'    => null,
+                    'messages' => [
+                         'success' => 'Deck created successfully',
+                         'id' => $id
+                    ]
+               ];
+          } else {
+               return  json_encode($this->validator->getErrors());
+          }
+          return $this->respondCreated($response);
+     }
 
-    // delete
-    public function delete($id = null)
-    {
-        $model = new DeckModel();
-        $data = $model->where('deck_id', $id)->delete($id);
-        if ($data) {
-            $model->delete($id);
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Deck successfully deleted'
-                ]
-            ];
-            return $this->respondDeleted($response);
-        } else {
-            return $this->failNotFound('No Deck found');
-        }
-    }
+     // single user
+     public function show($id = null)
+     {
+          $model = new DeckModel();
+          $data = $model->where('deck_id', $id)->first();
+          if ($data) {
+               return $this->respond($data);
+          } else {
+               return $this->failNotFound('No Deck found');
+          }
+     }
+
+     // update
+     public function update($id = null)
+     {
+          $model = new DeckModel();
+          $id = $this->request->getVar('id');
+          $data = [
+               'name' => $this->request->getVar('name'),
+               'number_of_cards'  => $this->request->getVar('num_of_cards'),
+               'type'  => $this->request->getVar('type'),
+          ];
+          $model->update($id, $data);
+          $response = [
+               'status'   => 200,
+               'error'    => null,
+               'messages' => [
+                    'success' => 'Deck updated successfully'
+               ]
+          ];
+          return $this->respond($response);
+     }
+
+     // delete
+     public function delete($id = null)
+     {
+          $model = new DeckModel();
+          $data = $model->where('deck_id', $id)->delete($id);
+          if ($data) {
+               $model->delete($id);
+               $response = [
+                    'status'   => 200,
+                    'error'    => null,
+                    'messages' => [
+                         'success' => 'Deck successfully deleted'
+                    ]
+               ];
+               return $this->respondDeleted($response);
+          } else {
+               return $this->failNotFound('No Deck found');
+          }
+     }
 }
