@@ -47,6 +47,7 @@ class Decks extends ResourceController
                     if ($file->isValid()) {
                          $foldername = strtolower($this->request->getVar('name'));
                          $foldername = str_replace(' ', '_', $foldername);
+                         $foldername = str_replace('/', '', $foldername);
                          $ext = $file->getExtension();
                          $time = time();
                          $file->move('./assets/upload/cards/' . $foldername, "cover_" . $time . "." . $ext);

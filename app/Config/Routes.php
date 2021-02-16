@@ -38,7 +38,7 @@ $routes->get('/cards', 'CardController::index');
 $routes->get('/cards/(:num)', 'CardController::showbycard/$1');
 $routes->get('/cards/attribute/(:num)', 'CardController::getAttribute/$1');
 $routes->get('/cards/(:num)/(:num)', 'CardController::showbydeckcard');
-
+$routes->get('/tes', 'CronController::deleteunusedImage');
 /*
  * --------------------------------------------------------------------
  * Additional Routing
