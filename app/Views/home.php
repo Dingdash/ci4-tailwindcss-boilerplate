@@ -5,16 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<?=base_url('assets/styles/tailwind.css');?>">
+    <link rel="stylesheet" href="<?= base_url('assets/styles/tailwind.css'); ?>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <title>Home</title>
     <style>
     #dropdown-content {
         margin-top: 20px;
         display: none;
-    }
-
-    .pagination {
-        /* display: flex; */
     }
 
     .pagination li {
@@ -66,8 +63,9 @@
             <div class="w-2/3">
                 <div class="flex pb-4 text-2xl justify-between text-white">
                     <div class=" leftheader">Deck Table</div>
-                    <div class=" rightheade border border-white px-2">
-                        <button>Add New</button>
+                    <div class=" rightheader border border-white px-2">
+                        <a style="appearance:none; display:block;" href="<?php echo base_url('/newdeck'); ?>">Add
+                            New</a>
                     </div>
                 </div>
                 <table class="card-table w-full text-white text-center">
@@ -92,7 +90,7 @@
                         <tr style="height:8px;">
                         </tr>
                     </thead>
-                    <tbody class="bg-brown-3 mt-2">
+                    <tbody id="datatable" class="bg-brown-3 mt-2">
                         <tr>
                             <td class='p-4'>
                                 <div class="flex items-center">
@@ -170,6 +168,38 @@
     </div>
 </body>
 <script>
+axios.get("<?php echo base_url(); ?>/decks").then(function(response) {
+    data = response.data.deck;
+    console.log(data[0]);
+    var string = "";
+    for (var i = 0; i < data.length; i++) {
+        string += "<tr>";
+        string += "<td class='p-4'>";
+        string += '<div class="flex items-center">';
+        string += '<input type="checkbox" class="form-checkbox text-red-200">';
+        string += '<div class="ml-2">' + data[i].name + '</div>';
+        string += '</div>';
+        string += '</td>';
+        string += '<td class= "p-4">';
+        string += data[i].number_of_cards;
+        string += '</td>';
+        string += '<td class= "p-4">';
+        string += data[i].created_at;
+        string += '</td>';
+        string += '<td class="p-4">';
+        string += ` <button class = "bg-red-600 p-2 rounded-md" > Delete </button> 
+            <button class = "bg-orange-900 p-2 rounded-md" > Edit </button> `;
+        string += "</tr>";
+
+
+
+
+
+    }
+    document.getElementById("datatable").innerHTML = string;
+
+});
+
 function navclick() {
     var width = document.getElementById("aside").offsetWidth;
 

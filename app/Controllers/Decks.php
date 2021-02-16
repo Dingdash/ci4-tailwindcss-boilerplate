@@ -13,6 +13,7 @@ class Decks extends ResourceController
     // all users
     public function index()
     {
+        helper(['form', 'url']);
         $model = new DeckModel();
         $data['deck'] = $model->orderBy('deck_id', 'DESC')->findAll();
         return $this->respond($data);
@@ -21,20 +22,30 @@ class Decks extends ResourceController
     // create
     public function create()
     {
+
+        // echo $isvalid;
+        // if ($isvalid) {
         $model = new DeckModel();
         $data = [
             'name' => $this->request->getVar('name'),
             'number_of_cards'  => $this->request->getVar('num_of_cards'),
             'type' => $this->request->getVar('type')
         ];
-        $model->insert($data);
+        $id = $model->save($data);
+        if (!$id) {
+            return $this->fail($model->errors());
+        }
         $response = [
             'status'   => 201,
             'error'    => null,
             'messages' => [
-                'success' => 'Deck created successfully'
+                'success' => 'Deck created successfully',
+                'id' => $id
             ]
         ];
+        // } else {
+        // }
+
         return $this->respondCreated($response);
     }
 
